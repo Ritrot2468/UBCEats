@@ -130,6 +130,20 @@ router.get("/fetch-all-restaurants", async (req, res) => {
     }
 });
 
+// H
+router.get("/:restaurantId/menu", async (req, res) => {
+    let restaurantId = req.params.restaurantId;
+
+    const initiateResult = await appService.fetchRestaurantMenuFromDb(restaurantId);
+    console.log(initiateResult);
+    if (initiateResult) {
+        res.json({ success: true, result: initiateResult});
+    } else {
+        res.status(500).json({ success: false });
+    }
+});
+
+
 router.post("/update-review-content", async (req, res) => {
     const { oldContent, newContent, columnName, reviewID} = req.body;
     const updateResult = await appService.updateReviewContent(oldContent, newContent, columnName, reviewID);

@@ -8,8 +8,12 @@ const RestaurantsContainer = () => {
     const [loading, setLoading] = useState(false);
     const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
+    const [viewMenu, setViewMenu] = useState(false); // New state for menu view
+    const [error, setError] = useState(null);
+
     const viewAllRestaurants = async () => {
         setLoading(true);
+        setError(null); //
 
         try {
             const response = await fetchAllRestaurants()
@@ -21,6 +25,7 @@ const RestaurantsContainer = () => {
             setAllRestaurants(finalResult);
         } catch (error) {
             console.error("Failed to fetch restaurants:", error);
+            setError('Failed to load restaurants. Please try again.');
         }
         setLoading(false);
 
@@ -49,6 +54,7 @@ const RestaurantsContainer = () => {
                     <button onClick={viewAllRestaurants}>View All Restaurants</button>
 
                     {loading && <p>Loading...</p>}
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
 
                     {allRestaurants.length > 0 && (
                         <ul>
@@ -58,6 +64,13 @@ const RestaurantsContainer = () => {
                                     <button onClick={() => setSelectedRestaurant(restaurant)}>
                                         View Details
                                     </button>
+                                    <button
+                                        onClick={() => {
+                                          setSelectedRestaurant(restaurant);
+                                          setViewMenu(true); // Activate menu view
+                                        }}>
+                                        View Menu
+                                    </button>   
                                 </li>
                             ))}
                         </ul>

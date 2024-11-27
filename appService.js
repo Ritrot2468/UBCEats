@@ -119,6 +119,41 @@ async function fetchUserTableFromDb() {
     });
 }
 
+async function fetchRestaurantMenuFromDb(restaurantId) {
+    return await withOracleDB(async (connection) => {
+        console.log("before connecting")
+        const result = await connection.execute(`
+            SELECT 
+                mi.Menu_Item_Name,
+                mi.Description,
+                mi.Price,
+                d.Diet_Type,
+                a.Allergen_Type
+            FROM 
+                Menu_Item_On mi
+            JOIN 
+                Menu_Serves ms ON mi.Menu_Id = ms.Id
+            JOIN 
+                Restaurant_Location_Has rlh ON ms.Restaurant_Latitude = rlh.Latitude AND ms.Restaurant_Longitude = rlh.Longitude
+            LEFT JOIN 
+                Contains_Diet cd ON mi.Menu_Item_Name = cd.Menu_Item_Name AND mi.Menu_Id = cd.Menu_Id
+            LEFT JOIN 
+                Diet d ON cd.Diet_Type = d.Diet_Type
+            LEFT JOIN 
+                Contains_Allergen ca ON mi.Menu_Item_Name = ca.Menu_Item_Name AND mi.Menu_Id = ca.Menu_Id
+            LEFT JOIN 
+                Allergen a ON ca.Allergen_Type = a.Allergen_Type
+            WHERE 
+                rlh.Restaurant_Id = ${columnName}       
+            `);
+        console.log("after connecting")
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+
 
 async function initiateDemotable() {
     return await withOracleDB(async (connection) => {

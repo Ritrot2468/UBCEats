@@ -15,9 +15,10 @@
 
 // This function checks the database connection and updates its status on the frontend.
 
+const host = 'http://localhost:50001'
 
 export async function checkDbConnection() {
-    const response = await fetch('http://localhost:50001/check-db-connection', {
+    const response = await fetch(`${host}/check-db-connection`, {
         method: "GET"
     });
     return await response.text();
@@ -25,7 +26,7 @@ export async function checkDbConnection() {
 
 export async function fetchAllRestaurants() {
     try {
-        const response = await fetch('http://localhost:50001/fetch-all-restaurants', {
+        const response = await fetch(`${host}/fetch-all-restaurants`, {
             method: "GET"
         });
 
@@ -41,8 +42,27 @@ export async function fetchAllRestaurants() {
     }
 }
 
+export async function fetchRestaurantMenu(restaurantId) {
+    try {
+        const response = await fetch(`${host}/${restaurantId}/menu`, {
+            method: "GET"
+        });
+
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
+        }
+
+        return await response.json();
+
+    } catch (error) {
+        console.error("Error fetching restaurant menu:", error);
+        return [];
+    }
+}
+
+
 export async function fetchUsersReviews(userName) {
-    const response = await fetch('http://localhost:50001/update-user-review', {
+    const response = await fetch(`${host}/update-user-review`, {
         method: 'GET',
         body: JSON.stringify({
             userName: userName,
@@ -88,7 +108,7 @@ export async function updateUserReview(newContent, oldContent, columnName, revie
 
 // List restaurant locations based on given restaurant
 export async function findRestaurantInfo(restaurantNameValue) {
-    const url =`http://localhost:50001/find-restaurants?restaurantName=${encodeURIComponent(restaurantNameValue)}`;
+    const url =`${host}/find-restaurants?restaurantName=${encodeURIComponent(restaurantNameValue)}`;
 
     const response = await fetch(url, {
         method: 'GET'
