@@ -14,9 +14,12 @@
 
 
 // This function checks the database connection and updates its status on the frontend.
+<<<<<<< HEAD
 
 const host = 'http://localhost:50001'
 
+=======
+>>>>>>> c8a26c21f1a1d88ea779be5b5fa59db0edd5cab7
 export async function checkDbConnection() {
     const response = await fetch(`${host}/check-db-connection`, {
         method: "GET"
@@ -62,19 +65,38 @@ export async function fetchRestaurantMenu(restaurantId) {
 
 
 export async function fetchUsersReviews(userName) {
+<<<<<<< HEAD
     const response = await fetch(`${host}/update-user-review`, {
         method: 'GET',
         body: JSON.stringify({
             userName: userName,
         })
+=======
+    const response = await fetch(`http://localhost:50001/fetch-user-reviews/${encodeURIComponent(userName)}`, {
+        method: 'GET'
+>>>>>>> c8a26c21f1a1d88ea779be5b5fa59db0edd5cab7
     });
+
 
     if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
     }
     return await response.json();
 }
-export async function updateUserReview(newContent, oldContent, columnName, reviewID) {
+
+export async function fetchReviewContent(reviewID) {
+        const response = await fetch(`http://localhost:50001/fetch-user-review/${encodeURIComponent(reviewID)}`, {
+            method: 'GET'
+        });
+
+           if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
+           }
+       return await response.json();
+}
+
+
+export async function updateUserReview(newContent, columnName, reviewID) {
 
 /// Have FRONT END ENSURE IF RATING IS BEING CHANGED THAT ONLY THE NUMBER VALUE IS BETWEEN 0 -5
 /// AND CONTENT CHAR LENGTH < 200 char
@@ -89,13 +111,12 @@ export async function updateUserReview(newContent, oldContent, columnName, revie
                 },
                 body: JSON.stringify({
                     newContent,
-                    oldContent,
                     columnName,
                     reviewID,
                 }),
             }
         );
-        if (!response.success) {
+        if (!response.ok) {
             throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
         }
 
@@ -105,6 +126,32 @@ export async function updateUserReview(newContent, oldContent, columnName, revie
         throw error;
     }
 }
+
+
+export async function deleteReview(reviewID) {
+
+/// Have FRONT END ENSURE IF RATING IS BEING CHANGED THAT ONLY THE NUMBER VALUE IS BETWEEN 0 -5
+/// AND CONTENT CHAR LENGTH < 200 char
+
+    try {
+        const response = await fetch(
+            `http://localhost:50001/delete-review/${encodeURIComponent(reviewID)}`,
+            {
+                method: 'DELETE',
+            }
+        );
+        if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating user review:', error);
+        throw error;
+    }
+}
+
+
 
 // List restaurant locations based on given restaurant
 export async function findRestaurantInfo(restaurantNameValue) {
@@ -272,11 +319,6 @@ export async function findRestaurantInfo(restaurantNameValue) {
 //         });
 //     });
 // }
-
-
-//TODO
-
-
 
 
 // ---------------------------------------------------------------
